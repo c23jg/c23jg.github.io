@@ -1,0 +1,230 @@
+<html>
+<head>
+<title> Jai's Bick Breaker 
+</title>
+<script src="https://cdn.rawgit.com/stevekrouse/WoofJS/c0652fbe88df979f62cd5960b2ae770274b03c7a/woof.js">
+</script>
+
+<style>
+#project {
+padding: 0;
+margin: auto;
+display: block;
+width: 800px;
+height: 500px;
+position: absolute;
+top: 50;
+bottom: 0;
+left: 0;
+right: 0;
+}
+</style>
+
+</head>
+
+<body>
+<left>		
+<font face="avenir" size="6">
+
+</font>
+</left>
+
+<script>
+var h = 500;
+var w = 800;
+var x_velocity= 3;
+var y_velocity= -3;
+var x_edge= 375;
+var y_edge= 225;
+var numBlocks= 25;
+var numBlocksLevel= 0;
+var block = [numBlocks]
+var score = 0;
+var lives = 5;
+var block_r;
+var block_c;	
+var gameOn = false;
+var blocksLeft = 10;
+var level=0;
+fullScreen = false;
+setBackdropSize(w, h);
+setBackdropURL("http://static1.squarespace.com/static/539f3dbde4b0514810beca18/t/5568372ae4b08539e50433e8/1432893228392/Black-Brick-Wall-Background.jpg?format=1500w");
+ var paddle = addRectangle({x: 0, y: -200, angle: 0, rectangleHeight: 20, rectangleWidth: 90, color: "blue", rotationStyle: "ROTATE", showing: true});
+
+ var title = addText({x: 0, y: maxY - 25, size: 20, color: "red", angle: 0, rotationStyle: "ROTATE", showing: true,text:"BrickBreaker"});
+ 
+ var ball = addCircle({x: 0, y: 0, angle: 0, color: "red", rotationStyle: "ROTATE", showing: true});
+
+ var livesText = addText({x: maxX - 50, y: maxY - 25, size: 20, color: "white", angle: 0, rotationStyle: "ROTATE", showing: true,});
+ 
+ var scoreText = addText({x: -250, y: maxY - 25, size: 20, color: "white", angle: 0, rotationStyle: "ROTATE", showing: true,});
+ 
+var lobbyText = addText({x: 0, y: 0, size: 60, color: "white", angle: 0, rotationStyle: "ROTATE", showing: true, text: "Press space to continue"});
+
+var congratsText = addText({x: 0, y: 0, size: 60, color: "white", angle: 0, rotationStyle: "ROTATE", showing: false, text: "You beat the level! Ready?"});
+
+var gameOverText = addText({x: 0, y: 0, size: 60, color: "white", angle: 0, rotationStyle: "ROTATE", showing: false, text: "Game Over"});
+
+var winText = addText({x: 0, y: 0, size: 60, color: "white", angle: 0, rotationStyle: "ROTATE", showing: false, text: "You win!"});
+
+//var debugText = addText({x: -250, y: 200, size: 60, color: "yellow", angle: 0, rotationStyle: "ROTATE", showing: true, text: " "});
+
+
+//setup blocks 
+ for ( var i=0; i<numBlocks; i++) {
+ 	block [i]= addRectangle({x: 1000, y: -1000, angle: 0, rectangleHeight: 20, rectangleWidth: 30, color: "orange",rotationStyle: "ROTATE", showing: true});
+ }
+
+
+function setUpBlocks (numBlocksLevel) {
+	for ( var i=0; i<numBlocksLevel; i++) {
+			block_r = parseInt(i/5)+1;
+			block_c = i%5 +1;
+			block[i].x = -300 + (block_c * 100);
+			block[i].y = 50 + (block_r * 40);
+	if (block_r === 1) block[i].color = "orange";
+		else if (block_r === 2) block[i].color = "red";
+		else block[i].color = "yellow";
+	}
+
+
+
+}
+
+
+
+
+function newLevel() { //after completing a level
+    		level +=1;
+    		gameOn = true;
+    		numBlocksLevel=(level)*5;
+    		blocksLeft = numBlocksLevel;
+			setUpBlocks(numBlocksLevel);
+            //debugText.text = numBlocks;
+
+    }
+	
+
+function doLobby() {
+	if (keysDown.includes(" ")) {
+		lobbyText.showing=false;
+		newLevel();
+		x_velocity+ 0.5
+		y_velocity+ 0.5
+	}
+
+ }	
+
+
+// PROGRAM STARTS HERE ====================
+
+
+forever(function() { 
+
+
+
+if (gameOn===true) {
+		doAction();
+}	else {
+		doLobby();
+}
+
+
+
+//  THE STUFF RUNS HERE ********  =====================
+function doAction(){
+
+	scoreText.text = "Score: " + score + " Lvl: "+level;
+	livesText.text = "Lives:" + lives;
+
+	ball.x += x_velocity;
+	ball.y += y_velocity;
+
+   // move the paddle
+	if (keysDown.includes("LEFT")){
+		if (paddle.x > -x_edge+20)
+			paddle.x -=5;
+    
+	}
+
+	if (keysDown.includes("RIGHT")){
+	
+		if (paddle.x < x_edge-20){
+			paddle.x +=5;
+		}
+    }
+
+
+
+    //when ball hits block
+	for ( var i=0; i<numBlocks; i++) {
+		if (ball.touching(block[i])){
+			block[i].y=30293;
+			score++;
+			y_velocity *= -1;
+			blocksLeft -= 1;
+			if (blocksLeft === 0) {
+				if (level===5)	{
+					winText.showing = true;
+					gameOn=false;
+				 } else {
+					gameOn=false;
+					congratsText.showing = true;
+				}
+			}
+		}
+	}
+
+//top wall
+if (ball.y > h/2){
+	y_velocity *= -1;
+}
+//right wall
+if (ball.x > w/2){
+	x_velocity *= -1;
+	
+	}
+
+//bottom wall
+	if (ball.y < -h/2){
+		y_velocity *= -1;
+		lives--;
+	}
+
+//left wall
+	if (ball.x < -w/2){
+		x_velocity *= -1;
+}
+
+//paddle bounce
+	if (   ball.touching(paddle)&&(y_velocity < 0))   {
+		y_velocity *= -1;
+		ball.y += 10;
+     }
+
+ 	 if (lives === 0) {  //if you lost
+		  gameOn=false;
+		  gameOverText.showing=true
+
+		  
+	}
+
+
+	if (gameOn===true){
+		congratsText.showing=false;
+	}
+
+
+
+
+};
+
+});  // close forever function
+
+</script>
+
+
+
+
+</body>
+</html>

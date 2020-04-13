@@ -1,9 +1,14 @@
 <!DOCTYPE html> 
 <head>
 </head>
-<body>	
+<body>
+<div style="text-align:center">	
 	<canvas id="myCanvas" width="288" height="512"></canvas>
+</div>
+<h1> WORK IN PROGRESS </h1>
 
+<p> Press space to move up. Try to get your water bottle through the seaweed. NOTE: Do not try to go under the sea weed.
+</p>
 <script>
     
 
@@ -51,7 +56,7 @@ var pipe = [];
 
 pipe[0] = {
     x : cvs.width,
-    y : 0
+    y :-50
 };
 
 // draw images
@@ -107,6 +112,32 @@ function draw(){
 draw();
 }
    </script>
+<style>
+
+body {
+  background-color: black;
+
+}
+
+h1 {
+  color: cyan;
+  text-align: center;
+}
+
+h2 {
+  color: cyan;
+  text-align: center;
+}
+
+p {
+  font-family: trebuchet ms;
+  font-size: 20;
+  text-align: center;
+  color: cyan;
+
+}
+</style>
+
   </body>
 </html>
 
